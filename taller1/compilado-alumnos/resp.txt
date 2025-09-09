@@ -1,0 +1,57 @@
+execve("./hai", ["./hai", "2"], 0x7fff0289d370 /* 68 vars */) = 0
+uname({sysname="Linux", nodename="pc46", ...}) = 0
+brk(NULL)                               = 0x3574a000
+brk(0x3574b1c0)                         = 0x3574b1c0
+arch_prctl(ARCH_SET_FS, 0x3574a880)     = 0
+readlink("/proc/self/exe", "/home/Estudiante/Escritorio/hoy/"..., 4096) = 60
+brk(0x3576c1c0)                         = 0x3576c1c0
+brk(0x3576d000)                         = 0x3576d000
+access("/etc/ld.so.nohwcap", F_OK)      = -1 ENOENT (No existe el archivo o el directorio)
+clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0x3574ab50) = 736459
+rt_sigaction(SIGINT, {sa_handler=0x40108e, sa_mask=[INT], sa_flags=SA_RESTORER|SA_RESTART, sa_restorer=0x406bf0}, {sa_handler=SIG_DFL, sa_mask=[], sa_flags=0}, 8) = 0
+rt_sigprocmask(SIG_BLOCK, [CHLD], [], 8) = 0
+rt_sigaction(SIGCHLD, NULL, {sa_handler=SIG_DFL, sa_mask=[], sa_flags=0}, 8) = 0
+rt_sigprocmask(SIG_SETMASK, [], NULL, 8) = 0
+nanosleep({tv_sec=1, tv_nsec=0}, 0x7fff2cfe1d40) = 0
+write(1, "sup!\n", 5sup!
+)                   = 5
+kill(736459, SIGURGya va!
+)                    = 0
+rt_sigprocmask(SIG_BLOCK, [CHLD], [], 8) = 0
+rt_sigaction(SIGCHLD, NULL, {sa_handler=SIG_DFL, sa_mask=[], sa_flags=0}, 8) = 0
+rt_sigprocmask(SIG_SETMASK, [], NULL, 8) = 0
+nanosleep({tv_sec=1, tv_nsec=0}, 0x7fff2cfe1d40) = 0
+write(1, "sup!\n", 5sup!
+)                   = 5
+kill(736459, SIGURGya va!
+)                    = 0
+rt_sigprocmask(SIG_BLOCK, [CHLD], [], 8) = 0
+rt_sigaction(SIGCHLD, NULL, {sa_handler=SIG_DFL, sa_mask=[], sa_flags=0}, 8) = 0
+rt_sigprocmask(SIG_SETMASK, [], NULL, 8) = 0
+nanosleep({tv_sec=1, tv_nsec=0}, 0x7fff2cfe1d40) = 0
+write(1, "sup!\n", 5sup!
+)                   = 5
+kill(736459, SIGURGya va!
+)                    = 0
+rt_sigprocmask(SIG_BLOCK, [CHLD], [], 8) = 0
+rt_sigaction(SIGCHLD, NULL, {sa_handler=SIG_DFL, sa_mask=[], sa_flags=0}, 8) = 0
+rt_sigprocmask(SIG_SETMASK, [], NULL, 8) = 0
+nanosleep({tv_sec=1, tv_nsec=0}, 0x7fff2cfe1d40) = 0
+write(1, "sup!\n", 5sup!
+)                   = 5
+kill(736459, SIGURGya va!
+)                    = 0
+rt_sigprocmask(SIG_BLOCK, [CHLD], [], 8) = 0
+rt_sigaction(SIGCHLD, NULL, {sa_handler=SIG_DFL, sa_mask=[], sa_flags=0}, 8) = 0
+rt_sigprocmask(SIG_SETMASK, [], NULL, 8) = 0
+nanosleep({tv_sec=1, tv_nsec=0}, 0x7fff2cfe1d40) = 0
+write(1, "sup!\n", 5sup!
+)                   = 5
+kill(736459, SIGURGya va!
+)                    = 0
+--- SIGINT {si_signo=SIGINT, si_code=SI_USER, si_pid=736459, si_uid=1001} ---
+ERROR child exec(...): No such file or directory
+wait4(-1, [{WIFEXITED(s) && WEXITSTATUS(s) == 1}], 0, NULL) = 736459
+--- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=736459, si_uid=1001, si_status=1, si_utime=500 /* 5.00 s */, si_stime=0} ---
+exit_group(0)                           = ?
++++ exited with 0 +++

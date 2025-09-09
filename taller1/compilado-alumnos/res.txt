@@ -1,0 +1,10 @@
+exec
+fork 1
+SIGCHILD 1
+sleep 1
+write 1 "sup"
+SIGURG 1 "ya va"
+
+write 2 "sup"
+SIGCHILD 2
+
