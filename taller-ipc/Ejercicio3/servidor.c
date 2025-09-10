@@ -5,6 +5,11 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <sys/un.h>
+#include <signal.h>   // para signal() y SIGINT
+
+
+volatile sig_atomic_t running = 1;
+
 
 int calcular(const char *expresion) {
     int num1, num2, resultado;
@@ -43,7 +48,48 @@ int calcular(const char *expresion) {
     return resultado;
 }
 
+
+int correr_cliente(int client_socket)
+{
+
+    while (1)
+    {
+        char buffer[256] = {0}; // tamaño arbitrario
+        size_t len_buf = sizeof(buffer)-1;
+        ssize_t len_msg = recv(client_socket, &buffer, len_buf, 0);
+
+        if (len_msg < 0)
+        {
+            perror("recv failed");
+            continue;
+        }
+
+        // If no  messages  are available to be received and the peer 
+        // has performed an orderly shut‐down, recv() shall return 0.
+        if (len_msg == 0)
+            break;
+
+        int resultado = calcular(buffer);
+
+        send(client_socket, &resultado, sizeof(resultado), 0);
+    }
+
+    close(client_socket);
+
+    exit(0);
+}
+
+
+void handle_sigint(int sig)
+{
+    running = 0;
+}
+
+
 int main() {
+
+    // signal(SIGINT, handle_sigint);
+
     // burocracia de sockets
 
     // SOCKET DE CLIENTE/SERVIDOR, ADDR DE CLIENTE/SERVIDOR ....
@@ -51,8 +97,8 @@ int main() {
     int client_socket;
     struct sockaddr_un server_addr;
     struct sockaddr_un client_addr;
-    unsigned int slen = sizeof(server_addr);
-    unsigned int clen = sizeof(client_addr);
+    socklen_t slen = sizeof(server_addr);
+    socklen_t clen = sizeof(client_addr);
 
 
     // The  AF_UNIX  (also  known  as  AF_LOCAL) socket family is used to communicate between
@@ -71,11 +117,29 @@ int main() {
     bind(server_socket, (struct sockaddr *) &server_addr, slen);
     listen(server_socket, 1);
      
-    // COMPLETAR. Este es un ejemplo de funcionamiento básico.
-    // La expresión debe ser recibida como un mensaje del cliente hacia el servidor.
-    const char *expresion = "10+5";  
-    int resultado = calcular(expresion);
-    printf("El resultado de la operación es: %d\n", resultado);
+    while (running)
+    {
+        // Upon successful completion, accept() shall return the non-negative file descriptor  of
+        // the  accepted socket.
+        client_socket = accept(server_socket, (struct sockaddr *) &client_addr, &clen);
+        if (client_socket < 0)
+        {
+            perror("accept failed");
+            continue;
+        }
+        // FORK
+        if (fork() == 0)
+        {
+            close(server_socket);
+            correr_cliente(client_socket);
+        }
+        
+        close(client_socket);
+    }
+
+
+    close(server_socket);
+
     exit(0);
 }
 
