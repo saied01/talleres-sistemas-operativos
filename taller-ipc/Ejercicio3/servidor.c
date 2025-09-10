@@ -45,17 +45,28 @@ int calcular(const char *expresion) {
 
 int main() {
     // burocracia de sockets
+
+    // SOCKET DE CLIENTE/SERVIDOR, ADDR DE CLIENTE/SERVIDOR ....
     int server_socket;
     int client_socket;
     struct sockaddr_un server_addr;
     struct sockaddr_un client_addr;
-    uint slen = sizeof(server_addr);
-    uint clen = sizeof(client_addr);
+    unsigned int slen = sizeof(server_addr);
+    unsigned int clen = sizeof(client_addr);
 
+
+    // The  AF_UNIX  (also  known  as  AF_LOCAL) socket family is used to communicate between
+    // processes on the same machine efficiently.
     server_addr.sun_family = AF_UNIX;
     strcpy(server_addr.sun_path, "unix_socket");
+
+    // unlink() deletes a name from the filesystem.  If that name was the last link to a file
+    // and no processes have the file open, the file is deleted and the space it was using is
+    // made available for reuse.
     unlink(server_addr.sun_path);
 
+    // socket()  creates  an  endpoint  for  communication and returns a file descriptor that
+    // refers to that endpoint.
     server_socket = socket(AF_UNIX, SOCK_STREAM, 0);
     bind(server_socket, (struct sockaddr *) &server_addr, slen);
     listen(server_socket, 1);
