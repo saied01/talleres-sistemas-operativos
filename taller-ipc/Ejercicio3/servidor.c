@@ -80,15 +80,26 @@ int correr_cliente(int client_socket)
 }
 
 
+
 void handle_sigint(int sig)
 {
     running = 0;
 }
 
 
+
+void handle_sigchld(int sig)
+{
+    wait(NULL);
+}
+
+
+
+
 int main() {
 
     // signal(SIGINT, handle_sigint);
+    signal(SIGCHLD, handle_sigchld);
 
     // burocracia de sockets
 
