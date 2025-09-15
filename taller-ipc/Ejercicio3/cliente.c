@@ -46,7 +46,7 @@ int main() {
 		int res;
 		recv(server_socket, &res, sizeof(res), 0);
 
-		printf("El valor recibido por el cliente es %d\n", res);
+		printf("El valor recibido por el cliente es: %d\n", res);
 
 		free(line);
 	}

@@ -7,7 +7,6 @@
 #include <sys/un.h>
 #include <signal.h>   // para signal() y SIGINT
 
-fd_set readfds;
 
 
 int calcular(const char *expresion) {
@@ -82,11 +81,6 @@ int correr_cliente(int client_socket)
 
 
 
-
-
-
-
-
 int main() {
 
     // signal(SIGINT, handle_sigint);
@@ -114,69 +108,25 @@ int main() {
 
     // socket()  creates  an  endpoint  for  communication and returns a file descriptor that
     // refers to that endpoint.
-    int *client_sockets = malloc(5*sizeof(int))
     server_socket = socket(AF_UNIX, SOCK_STREAM, 0);
     bind(server_socket, (struct sockaddr *) &server_addr, slen);
     listen(server_socket, 5);
-    int max_sd = server_socket;
      
-    while (1)
-    {
-        FD_ZERO(&readfds);
-        FD_SET(server_socket, &readfds);
-        
-        for (int i=0;client_sockets[i];i++)
-        {
-          FD_SET(client_sockets[i], &readfds);
-          if (client_sockets[i] > max_sd)
-            max_sd = client_sockets[i];
-        }
-        
-        int activity = select(max_sd+1, &readfds, NULL,NULL,NULL);
-
-
-
-        if (FD_ISSET(server_socket, &readfds))
-        {
-          
-          for (int i=0;client_sockets[i];i++)
-          {
-            client_sockets[i] = accept(server_socket, (struct sockaddr *) &client_addr, NULL);
-            if (client_sockets[i] == -1)
-            {
-              if (client_socket < 0)
-        {
-            perror("accept failed");
-            continue;
-        }
-        // FORK
-        if (fork() == 0)
-        {
-            close(server_socket);
-            correr_cliente(client_socket);
-        }
-        
-        close(client_socket);
-        }
-              
-          }
-        }
-        // Upon successful completion, accept() shall return the non-negative file descriptor  of
-        // the  accepted socket.
-        if (client_socket < 0)
-        {
-            perror("accept failed");
-            continue;
-        }
-        // FORK
-        if (fork() == 0)
-        {
-            close(server_socket);
-            correr_cliente(client_socket);
-        }
-        
-        close(client_socket);
+    while (1) {
+    client_socket = accept(server_socket, (struct sockaddr*)&client_addr, &clen);
+    if (client_socket < 0) {
+        perror("accept failed");
+        continue;
     }
+
+    if (fork() == 0) {
+        // hijo
+        close(server_socket);  
+        correr_cliente(client_socket);
+    }
+
+    close(client_socket);  // padre no usa el socket
+}
 
 
     close(server_socket);
