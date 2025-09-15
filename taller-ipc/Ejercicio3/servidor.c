@@ -7,8 +7,7 @@
 #include <sys/un.h>
 #include <signal.h>   // para signal() y SIGINT
 
-
-volatile sig_atomic_t running = 1;
+fd_set readfds;
 
 
 int calcular(const char *expresion) {
@@ -81,17 +80,9 @@ int correr_cliente(int client_socket)
 
 
 
-void handle_sigint(int sig)
-{
-    running = 0;
-}
 
 
 
-void handle_sigchld(int sig)
-{
-    wait(NULL);
-}
 
 
 
@@ -99,7 +90,6 @@ void handle_sigchld(int sig)
 int main() {
 
     // signal(SIGINT, handle_sigint);
-    signal(SIGCHLD, handle_sigchld);
 
     // burocracia de sockets
 
@@ -124,15 +114,55 @@ int main() {
 
     // socket()  creates  an  endpoint  for  communication and returns a file descriptor that
     // refers to that endpoint.
+    int *client_sockets = malloc(5*sizeof(int))
     server_socket = socket(AF_UNIX, SOCK_STREAM, 0);
     bind(server_socket, (struct sockaddr *) &server_addr, slen);
-    listen(server_socket, 1);
+    listen(server_socket, 5);
+    int max_sd = server_socket;
      
-    while (running)
+    while (1)
     {
+        FD_ZERO(&readfds);
+        FD_SET(server_socket, &readfds);
+        
+        for (int i=0;client_sockets[i];i++)
+        {
+          FD_SET(client_sockets[i], &readfds);
+          if (client_sockets[i] > max_sd)
+            max_sd = client_sockets[i];
+        }
+        
+        int activity = select(max_sd+1, &readfds, NULL,NULL,NULL);
+
+
+
+        if (FD_ISSET(server_socket, &readfds))
+        {
+          
+          for (int i=0;client_sockets[i];i++)
+          {
+            client_sockets[i] = accept(server_socket, (struct sockaddr *) &client_addr, NULL);
+            if (client_sockets[i] == -1)
+            {
+              if (client_socket < 0)
+        {
+            perror("accept failed");
+            continue;
+        }
+        // FORK
+        if (fork() == 0)
+        {
+            close(server_socket);
+            correr_cliente(client_socket);
+        }
+        
+        close(client_socket);
+        }
+              
+          }
+        }
         // Upon successful completion, accept() shall return the non-negative file descriptor  of
         // the  accepted socket.
-        client_socket = accept(server_socket, (struct sockaddr *) &client_addr, &clen);
         if (client_socket < 0)
         {
             perror("accept failed");
